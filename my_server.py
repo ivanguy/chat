@@ -2,7 +2,7 @@
 peers = dict()
 count = 0
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import json
+import json,urllib.request
 
 class Handler(BaseHTTPRequestHandler):
     def do_HEAD(self, content_type='text/html'):
@@ -19,18 +19,21 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self): #todo
         self.do_HEAD('text/plain')
+        ip = self.client_address[0]
         jsondata = json.dumps(peers)
         self.wfile.write(bytes(jsondata, 'utf-8'))
+        print('sent ', jsondata,' to {}@{}'.format(peers[ip],ip))
 
     def do_POST(self):
         self.do_HEAD()
 
         ip = self.client_address[0]
         nick = self.rfile.read(self.headers['Content-lenght']).decode('utf-8')
-        print(nick)
-        if ip in peers.values():
-            peers.pop(list(peers.keys())[list(peers.values()).index(ip)]) # delete existing name
-        peers[nick] = ip
+        
+        if ip in peers.keys():
+            peers.pop(ip) # delete existing name
+        peers[ip] = nick
+        print('Added {} @ {}'.format(nick, ip))
         print(peers)
 
 
@@ -40,7 +43,7 @@ port = 8080
 
 try:
     server = HTTPServer((host, port), Handler)
-    [print(item) for item in server.__dict__.values()]
+    print(server.server_name,'@',str(urllib.request.urlopen('http://www.biranchi.com/ip.php').read()),':',server.server_port)
     server.serve_forever()
 except KeyboardInterrupt:
     print('Shutting down on ^C')
