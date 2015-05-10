@@ -6,3 +6,5 @@ nick = input('nick=')
 header = {'Content-type': 'text/plain'}
 con.request('POST','',bytes(nick, 'utf-8'), header)
 con.close()
+
+
