@@ -33,12 +33,16 @@ class Handler(BaseHTTPRequestHandler):
         if ip in peers.keys():
             peers.pop(ip) # delete existing name
         peers[ip] = nick
+        peers[nick] = ip
         print('Added {} @ {}'.format(nick, ip))
         print(peers)
 
      def do_DELETE(self):
          self.do_HEAD()
-         del peers[self.client_address[0]]
+         ip = self.client_address
+         nick = peers[self.client_address[0]]
+         del peers[ip]
+         del peers[nick]
 
 
 host = ''
