@@ -10,7 +10,7 @@ class Handler(BaseHTTPRequestHandler):
         count += 1
         print('#'*10)
         print('Received {} connection #{}'.format(self.command, count))
-        print(self.client_address)
+        print('from ', self.client_address)
         #print(self.headers.__dict__)
 
         self.send_response(200)
@@ -36,6 +36,9 @@ class Handler(BaseHTTPRequestHandler):
         print('Added {} @ {}'.format(nick, ip))
         print(peers)
 
+     def do_DELETE(self):
+         self.do_HEAD()
+         del peers[self.client_address[0]]
 
 
 host = ''
@@ -43,7 +46,11 @@ port = 8080
 
 try:
     server = HTTPServer((host, port), Handler)
-    print(server.server_name,'@',str(urllib.request.urlopen('http://www.biranchi.com/ip.php').read()),':',server.server_port)
+    print(server.server_name,
+          '@',
+          str(urllib.request.urlopen('http://www.biranchi.com/ip.php').read()),
+          ':',
+          server.server_port)
     server.serve_forever()
 except KeyboardInterrupt:
     print('Shutting down on ^C')
