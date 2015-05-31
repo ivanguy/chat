@@ -97,8 +97,8 @@ class Conversation:
             server_sock.listen(1)
             while not self.quit_flag:
                 # accept connection from exact IP
-                conn = server_sock.accept()
-                if str(conn.getpeername()[0]) == str(ip):
+                conn, addr = server_sock.accept()
+                if addr[0] == str(ip):
                     self.i_conn = conn
                     server_sock.close()
                     break
