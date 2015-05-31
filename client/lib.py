@@ -10,11 +10,12 @@ APP_PORT = 1652
 BUFF = 4096
 
 
-def post_nick(nick='ivan'):
+def post_nick(nick='{username}'):
     """
     nick: str
     post your nickname to remote server
     """
+    nick = '{' + nick + '}'
     con = HTTPConnection(server_addr)
     header = {'Content-type': 'text/plain'}
     con.request('POST', '', bytes(nick, 'utf-8'), header)

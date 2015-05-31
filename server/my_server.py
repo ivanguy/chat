@@ -37,8 +37,8 @@ class Handler(BaseHTTPRequestHandler):
         if nick[:1] + nick[-1:] == '{}':  # protection
             nick = nick[1:-1]
             if ip in peers.keys():
-                nick = peers.pop(ip)  # delete existing name
-                peers.pop(nick)      # & ip
+                previous_nick = peers.pop(ip)  # delete existing name
+                peers.pop(previous_nick)      # & ip
             peers[ip] = nick
             peers[nick] = ip
             print('Added {} @ {}'.format(nick, ip))
