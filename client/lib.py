@@ -78,7 +78,8 @@ class Conversation:
             client_sock = socket()
             while not self.quit_flag:
                 try:
-                    client_sock.connect((str(ip), APP_PORT), timeout=5)
+                    client_sock.settimeout(5)
+                    client_sock.connect((str(ip), APP_PORT))
                     self.o_conn = client_sock
                 except socket.timeout:
                     continue
