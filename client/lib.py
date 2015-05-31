@@ -42,12 +42,15 @@ def get_peers_():
     -> (nicks, ips)
     split mixed tuple into two separate ones
     """
-    nicks = get_peers()
+    mix = get_peers()
+    nicks = dict()
     ips = dict()
     ipv4 = re.compile(r'^(?:\d{1,3}\.){3}\d{1,3}$')  # this regex mathes ipv4
-    for item in nicks:
+    for item in mix:
         if ipv4.match(item):
-            ips[item] = nicks.pop(item)
+            ips[item] = mix[item]
+        else:
+            nicks[item] = mix[item]
     return nicks, ips
 
 
