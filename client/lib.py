@@ -17,8 +17,9 @@ def post_nick(nick='ivan'):
     """
     con = HTTPConnection(server_addr)
     header = {'Content-type': 'text/plain'}
-    con.request('POST','',bytes(nick, 'utf-8'), header)
+    con.request('POST', '', bytes(nick, 'utf-8'), header)
     con.close()
+
 
 def get_peers():
     """
@@ -31,10 +32,9 @@ def get_peers():
     con = HTTPConnection(server_addr)
     con.request('GET', '')
     response = con.getresponse()
-    #print(response.status)
     d = json.loads(response.read().decode('utf-8'))
-    #print(type(d))
     return d
+
 
 def get_peers_():
     """
@@ -43,10 +43,10 @@ def get_peers_():
     """
     nicks = get_peers()
     ips = dict()
-    ipv4 = re.compile(r'^(?:\d{1,3}\.){3}\d{1,3}$') # this regex mathes ipv4 strings
+    ipv4 = re.compile(r'^(?:\d{1,3}\.){3}\d{1,3}$')  # this regex mathes ipv4
     for item in nicks:
         if ipv4.match(item):
-            ips[item]=nicks.pop(item)
+            ips[item] = nicks.pop(item)
     return nicks, ips
 
 
@@ -60,7 +60,7 @@ class Conversation:
     out_stream <- outgoing messages
 
     """
-    def __init__(self, ip, nick = '{username}'):
+    def __init__(self, ip, nick='{username}'):
         """
         ip: str '000.000.000.000'
 
@@ -78,14 +78,17 @@ class Conversation:
             client_sock = socket()
             while not self.quit_flag:
                 try:
-                    client_sock.connect( (str(ip), APP_PORT) , timeout = 5)
+                    client_sock.connect((str(ip), APP_PORT), timeout=5)
                     self.o_conn = client_sock
+                except socket.timeout:
+                    continue
+
         def in_connect(ip):
             """
             sets i_conn: a connection for incoming messages
             """
             server_sock = socket()
-            server_sock.bind( ("", APP_PORT) )
+            server_sock.bind(("", APP_PORT))
             server_sock.listen(1)
             while not self.quit_flag:
                 # accept connection from exact IP
@@ -99,8 +102,8 @@ class Conversation:
             else:
                 server_sock.close()
 
-        out_thread = threading.Thread( out_connect, daemon = True, args = (ip) )
-        in_thread = threading.Thread( in_connect, daemon = True, args = (ip) )
+        out_thread = threading.Thread(out_connect, daemon=True, args=(ip))
+        in_thread = threading.Thread(in_connect, daemon=True, args=(ip))
         out_thread.start()
         in_thread.start()
 
@@ -121,4 +124,4 @@ class Conversation:
         """
         sends msg to peer
         """
-        self.o_conn.send( msg.encode('utf-8') )
+        self.o_conn.send(msg.encode('utf-8'))
