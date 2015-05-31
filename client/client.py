@@ -1,5 +1,6 @@
 from http.client import HTTPConnection
 import json
+import re
 
 server_addr = '46.101.152.181:8080'
 APP_PORT = 1652
@@ -17,6 +18,7 @@ def post_nick(nick='ivan'):
 
 def get_peers():
     """
+    use get_peers_
     retuns dict of peers from server
     keys : values
     IP : NICK
@@ -30,6 +32,22 @@ def get_peers():
     d = json.loads(response.read().decode('utf-8'))
     #print(type(d))
     return d
+
+def get_peers_():
+    """
+    -> (nicks, ips)
+    """
+
+    nicks = get_peers()
+    ips = dict()
+    ipv4 = re.compile(r'^(?:\d{1,3}\.){3}\d{1,3}$')
+    for item in nicks:
+        if ipv4.match(item):
+            ips[item]=nick.pop(item)
+    return nicks, ips
+
+
+
 
 def listener(conn):
     while True:
