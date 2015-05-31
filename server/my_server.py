@@ -34,13 +34,17 @@ class Handler(BaseHTTPRequestHandler):
         ip = self.client_address[0]
         nick = self.rfile.read(self.headers['Content-lenght']).decode('utf-8')
 
-        if ip in peers.keys():
-            nick = peers.pop(ip)  # delete existing name
-            peers.pop(nick)      # & ip
-        peers[ip] = nick
-        peers[nick] = ip
-        print('Added {} @ {}'.format(nick, ip))
-        print(peers)
+        if nick[:1] + nick[-1:] == '{}':  # protection
+            nick = nick[1:-1]
+            if ip in peers.keys():
+                nick = peers.pop(ip)  # delete existing name
+                peers.pop(nick)      # & ip
+            peers[ip] = nick
+            peers[nick] = ip
+            print('Added {} @ {}'.format(nick, ip))
+            print(peers)
+        else:
+            print('NON valid POST')
 
     def do_DELETE(self):
         self.do_HEAD()
