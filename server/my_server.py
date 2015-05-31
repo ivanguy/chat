@@ -31,7 +31,8 @@ class Handler(BaseHTTPRequestHandler):
         nick = self.rfile.read(self.headers['Content-lenght']).decode('utf-8')
         
         if ip in peers.keys():
-            peers.pop(ip) # delete existing name
+            nick = peers.pop(ip) # delete existing name
+            peers.pop(nick)      # & ip
         peers[ip] = nick
         peers[nick] = ip
         print('Added {} @ {}'.format(nick, ip))
