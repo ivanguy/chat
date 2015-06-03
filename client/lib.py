@@ -82,10 +82,13 @@ class Conversation:
             client_sock = socket()
             while not self.quit_flag:
                 try:
+                    print('trying to connect')
                     client_sock.settimeout(5)
                     client_sock.connect((str(ip), APP_PORT))
                     self.o_conn = client_sock
+                    print('o_conn connected!!')
                 except OSError:
+                    print('connection timeout')
                     continue
 
         def in_connect(ip):
@@ -98,12 +101,15 @@ class Conversation:
             while not self.quit_flag:
                 # accept connection from exact IP
                 conn, addr = server_sock.accept()
+                print('accepted {}'.format(addr))
                 if addr[0] == str(ip):
                     self.i_conn = conn
                     server_sock.close()
+                    print('in_conn connected!!!')
                     break
                 else:
                     conn.close()
+                    print('i dropped connection')
             else:
                 server_sock.close()
 
