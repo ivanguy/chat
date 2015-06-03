@@ -82,8 +82,10 @@ class Conversation:
             client_sock = socket()
             while not self.quit_flag:
                 try:
-                    print('trying to connect')
-                    client_sock.settimeout(5)
+                    ip = str(ip)
+                    port = APP_PORT
+                    print('trying to connect {}:{}'.format(ip,port))
+                    #client_sock.settimeout(5)
                     client_sock.connect((str(ip), APP_PORT))
                     self.o_conn = client_sock
                     print('o_conn connected!!')
@@ -98,6 +100,7 @@ class Conversation:
             server_sock = socket()
             server_sock.bind(("", APP_PORT))
             server_sock.listen(1)
+            print('listening on {} waiting for {}'.format(APP_PORT, ip))
             while not self.quit_flag:
                 # accept connection from exact IP
                 conn, addr = server_sock.accept()
@@ -109,12 +112,12 @@ class Conversation:
                     break
                 else:
                     conn.close()
-                    print('i dropped connection')
+                    print('i dropped connection from {}'.format(addr[0]))
             else:
                 server_sock.close()
 
-        out_thread = threading.Thread(target=out_connect, daemon=True, args=(ip,))
-        in_thread = threading.Thread(target=in_connect, daemon=True, args=(ip,))
+        out_thread = threading.Thread(target=out_connect, daemon=True, args=(ip))
+        in_thread = threading.Thread(target=in_connect, daemon=True, args=(ip))
         out_thread.start()
         in_thread.start()
 
