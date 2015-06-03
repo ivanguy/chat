@@ -34,6 +34,7 @@ def get_peers():
     con.request('GET', '')
     response = con.getresponse()
     d = json.loads(response.read().decode('utf-8'))
+    con.close()
     return d
 
 
@@ -116,8 +117,8 @@ class Conversation:
             else:
                 server_sock.close()
 
-        out_thread = threading.Thread(target=out_connect, daemon=True, args=(ip))
-        in_thread = threading.Thread(target=in_connect, daemon=True, args=(ip))
+        out_thread = threading.Thread(target=out_connect, daemon=True, args=(ip,))
+        in_thread = threading.Thread(target=in_connect, daemon=True, args=(ip,))
         out_thread.start()
         in_thread.start()
 
