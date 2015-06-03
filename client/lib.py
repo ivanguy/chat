@@ -18,7 +18,8 @@ def post_nick(nick='{username}'):
     nick = '{' + nick + '}'
     con = HTTPConnection(server_addr)
     header = {'Content-type': 'text/plain'}
-    con.request('POST', '', bytes(nick, 'utf-8'), header)
+    con.request('POST', '', nick, header)
+    response = con.getresponse()
     con.close()
 
 
