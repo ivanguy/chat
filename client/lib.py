@@ -70,7 +70,7 @@ class Conversation:
 
         makes incoming and outgoing connections in a non-blocking way
         """
-        self.i_conn = None      # REMEMBER setting theese two takes some time
+        self.i_conn = None      # REMEMBER setting these two takes some time
         self.o_conn = None
         self.quit_flag = 0
         self.nick = nick
@@ -85,7 +85,7 @@ class Conversation:
                     client_sock.settimeout(5)
                     client_sock.connect((str(ip), APP_PORT))
                     self.o_conn = client_sock
-                except socket.timeout:
+                except OSError:
                     continue
 
         def in_connect(ip):
@@ -107,8 +107,8 @@ class Conversation:
             else:
                 server_sock.close()
 
-        out_thread = threading.Thread(out_connect, daemon=True, args=(ip))
-        in_thread = threading.Thread(in_connect, daemon=True, args=(ip))
+        out_thread = threading.Thread(target=out_connect, daemon=True, args=(ip,))
+        in_thread = threading.Thread(target=in_connect, daemon=True, args=(ip,))
         out_thread.start()
         in_thread.start()
 
