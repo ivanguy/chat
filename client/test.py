@@ -3,7 +3,7 @@ import threading
 
 nick = input('nick:')
 
-testchat = Conversation()
+testchat = Conversation(nick)
 
 server_thread = threading.Thread(target=testchat.server, daemon=True)
 server_thread.start()
@@ -22,7 +22,8 @@ def input_widget(msg):
     testchat.out_stream(msg)
 
 print(*list(testchat.nicks.keys()), sep='\n')
-friend = input('friend:')
+friend = input('friend:\n')
+print('friend:{}'.format(friend))
 testchat.out_connect(friend)
 
 connected.set()

@@ -86,12 +86,14 @@ class Conversation:
         """
         !BLOCKING
         """
-        def updater(self):
+        def updater():
             while True:
-                sleep(3)
+                sleep(10)
                 self.nicks, self.ips = get_peers_()
+                if self.out_socket == None:
+                    print(*list(self.nicks.keys()), sep='\n')
 
-        updater_thread = threading.Thread(target=self.updater, daemon=True)
+        updater_thread = threading.Thread(target=updater, daemon=True)
         updater_thread.start()
 
 
