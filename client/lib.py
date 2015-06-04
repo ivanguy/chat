@@ -87,7 +87,7 @@ class Conversation:
                     ip = str(ip)
                     port = APP_PORT
                     print('trying to connect {}:{}'.format(ip,port))
-                    #client_sock.settimeout(5)
+                    client_sock.settimeout(15)
                     client_sock.connect((str(ip), APP_PORT))
                     self.o_conn = client_sock
                     print('o_conn connected!!')
