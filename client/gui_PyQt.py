@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui, QtCore
 import sys
+import lib
 
 class MainWidget(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -12,7 +13,7 @@ class MainWidget(QtGui.QWidget):
         self.login_input_label.setTextFormat(2)
         self.login_input = QtGui.QLineEdit()
         self.peers_list = QtGui.QComboBox()
-        self.peers_list.addItems(['friend1', 'friend2', 'friend3', 'friend4'])
+        self.peers_list.addItems(list(self.get_peers_list().keys()))
         self.start_button = QtGui.QPushButton("Start chatting")
 
         self.chat_window = QtGui.QLabel('<center>WELCOME!</center>')
@@ -22,7 +23,6 @@ class MainWidget(QtGui.QWidget):
         self.msg_input = QtGui.QTextEdit()
         self.send_msg_button = QtGui.QPushButton("Send")
 
-
         self.setting_box = QtGui.QHBoxLayout()
         self.setting_box.addWidget(self.login_input_label)
         self.setting_box.addWidget(self.login_input)
@@ -31,7 +31,7 @@ class MainWidget(QtGui.QWidget):
 
         self.msg_input_panel = QtGui.QHBoxLayout()
         self.msg_input_panel.setSpacing(10)
-        self.msg_input_panel.setContentsMargins(20,0,20,0)
+        self.msg_input_panel.setContentsMargins(20, 0, 20, 0)
         self.msg_input_panel.addWidget(self.msg_input)
         self.msg_input_panel.addWidget(self.send_msg_button)
 
@@ -41,6 +41,20 @@ class MainWidget(QtGui.QWidget):
         self.wrapper.addLayout(self.msg_input_panel)
 
         self.setLayout(self.wrapper)
+        self.connect(self.start_button, QtCore.SIGNAL("clicked()"), self.start_chatting)
+        self.connect(self.login_input, QtCore.SIGNAL("editingFinished()"), self.post_nick)
+
+    # def keyPressEvent(self, event):
+    #     if event.key() == QtCore.Qt.Key_Enter:
+    #         self.emit()
+
+    def post_nick(self):
+        nick = self.login_input.text()
+        lib.post_nick(nick)
+
+    def get_peers_list(self):
+        nick, peers = lib.get_peers_()
+        return nick
 
     def send_msg(self):
         pass
@@ -48,8 +62,11 @@ class MainWidget(QtGui.QWidget):
     def receive_msg(self):
         pass
 
-    def start_chating(self):
-        pass
+    def start_chatting(self):
+
+        con = lib.Conversation()
+        self.chat_window.setText('started...')
+
 
 
 if __name__ == '__main__':
