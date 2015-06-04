@@ -97,7 +97,7 @@ class Conversation:
         updater_thread.start()
 
 
-    def server(self, key=None):
+    def server(self):
         """
         sets in_socket
         !BLOCKING
@@ -120,6 +120,7 @@ class Conversation:
         print('accepted {}'.format(addr))
         print('...but do i trust him?....')
         print('yes, for now..')
+
         #   try:
         #       yield self.ips[addr(0)]
         #   except KeyError:
@@ -159,8 +160,8 @@ class Conversation:
         """
         while True:
             if self.in_socket is None:
-                yield '...тишина...'
                 sleep(10)
+                yield 'глухо'
             else:
                 msg = ''
                 while True:
