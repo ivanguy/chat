@@ -3,6 +3,8 @@ import json
 import re
 import threading
 from socket import socket
+# import queue
+from time import sleep
 
 
 server_addr = '46.101.152.181:8080'
@@ -19,9 +21,8 @@ def post_nick(nick='{username}'):
     con = HTTPConnection(server_addr)
     header = {'Content-type': 'text/plain'}
     con.request('POST', '', nick, header)
-    response = con.getresponse()
+    con.getresponse()
     con.close()
-
 
 def get_peers():
     """
@@ -57,6 +58,7 @@ def get_peers_():
 
 
 class Conversation:
+
     """
     a chat object
     use:
@@ -66,78 +68,110 @@ class Conversation:
     out_stream <- outgoing messages
 
     """
-    def __init__(self, ip, nick='{username}'):
+    def __init__(self, nick='{username}'):
         """
         ip: str '000.000.000.000'
 
         makes incoming and outgoing connections in a non-blocking way
         """
-        self.i_conn = None      # REMEMBER setting these two takes some time
-        self.o_conn = None
-        self.quit_flag = 0
         self.nick = nick
+        self.in_socket = None
+        self.out_socket = None
 
-        def out_connect(ip):
-            """
-            sets o_conn: connection for outgoing messages
-            """
-            client_sock = socket()
-            while not self.quit_flag:
-                try:
-                    ip = str(ip)
-                    port = APP_PORT
-                    print('trying to connect {}:{}'.format(ip,port))
-                    client_sock.settimeout(15)
-                    client_sock.connect((str(ip), APP_PORT))
-                    self.o_conn = client_sock
-                    print('o_conn connected!!')
-                except OSError:
-                    print('connection timeout')
-                    continue
+        post_nick(nick)
+        self.start_updater()
 
-        def in_connect(ip):
-            """
-            sets i_conn: a connection for incoming messages
-            """
-            server_sock = socket()
-            server_sock.bind(("", APP_PORT))
-            server_sock.listen(1)
-            print('listening on {} waiting for {}'.format(APP_PORT, ip))
-            while not self.quit_flag:
-                # accept connection from exact IP
-                conn, addr = server_sock.accept()
-                print('accepted {}'.format(addr))
-                if addr[0] == str(ip):
-                    self.i_conn = conn
-                    server_sock.close()
-                    print('in_conn connected!!!')
-                    break
-                else:
-                    conn.close()
-                    print('i dropped connection from {}'.format(addr[0]))
-            else:
-                server_sock.close()
+    def start_updater(self):
+        """
+        !BLOCKING
+        """
+        def updater(self):
+            while True:
+                sleep(3)
+                self.nicks, self.ips = get_peers_()
 
-        out_thread = threading.Thread(target=out_connect, daemon=True, args=(ip,))
-        in_thread = threading.Thread(target=in_connect, daemon=True, args=(ip,))
-        out_thread.start()
-        in_thread.start()
+        updater_thread = threading.Thread(target=updater, daemon=True)
+        updater_thread.start()
+
+
+    def server(self, key=None):
+        """
+        sets in_socket
+        !BLOCKING
+        """
+        #"""
+        #это генератор, будет выдавать ник подключающегося друга(или ip недруга)
+        #ждет вызова do_i_trust_him
+        #блокирующий генератор => в тред его
+        #
+        #key = c :пока не разрешить кому-нибудь подключиться - будет крутиться
+        #"""
+        server_sock = socket()
+        server_sock.bind(("", APP_PORT))
+        server_sock.listen(1)
+        print('listening on {}'.format(APP_PORT))
+
+        #while True:
+            # accept connection from exact IP
+        conn, addr = server_sock.accept()
+        print('accepted {}'.format(addr))
+        print('...but do i trust him?....')
+        print('yes, for now..')
+        #   try:
+        #       yield self.ips[addr(0)]
+        #   except KeyError:
+        #       yield addr[0]
+        #       queue.get()
+        #   if self.trust:
+        self.in_socket = conn
+        server_sock.close()
+        #       break
+        #    else:
+        #        conn.close()
+        #else:  # выполнится когда рак на горе свиснет
+        #    server_sock.close()
+
+    def out_connect(self, nick):
+        """
+        sets out_socket: connection for outgoing messages
+        """
+        client_sock = socket()
+        client_sock.settimeout(15)
+        while True:
+            try:
+                ip = self.nicks[nick]
+                port = APP_PORT
+                print('trying to connect {}:{}'.format(ip, port))
+                client_sock.connect((str(ip), APP_PORT))
+                self.out_socket = client_sock
+                print('connected!!')
+                break
+            except OSError:
+                print('connection timeout')
+                continue
 
     def in_stream(self):
         """
         incoming messages generator + buffering
         """
-        while not self.quit_flag:
-            msg = ''
-            while True:
-                data = self.i_conn.recv(BUFF)
-                if not data:
-                    break
-                msg = msg + data.decode('utf-8')
-            yield msg
+        while True:
+            if self.in_socket is None:
+                yield '...тишина...'
+                sleep(10)
+            else:
+                msg = ''
+                while True:
+                    data = self.in_socket.recv(BUFF)
+                    if not data:
+                        break
+                    msg = msg + data.decode('utf-8')
+                yield msg
 
     def out_stream(self, msg):
         """
         sends msg to peer
         """
-        self.o_conn.send(msg.encode('utf-8'))
+        if self.out_socket is None:
+            print('self.out_socket is None')
+        else:
+            self.out_socket.send(msg.encode('utf-8'))
