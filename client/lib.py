@@ -88,7 +88,7 @@ class Conversation:
         """
         def updater():
             while True:
-                sleep(10)
+                sleep(20)
                 self.nicks, self.ips = get_peers_()
                 if self.out_socket == None:
                     print(*list(self.nicks.keys()), sep='\n')
@@ -138,9 +138,9 @@ class Conversation:
         """
         sets out_socket: connection for outgoing messages
         """
-        client_sock = socket()
-        client_sock.settimeout(15)
         while True:
+            client_sock = socket()
+            client_sock.settimeout(3)
             try:
                 ip = self.nicks[nick]
                 port = APP_PORT
