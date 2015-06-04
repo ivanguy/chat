@@ -77,6 +77,7 @@ class Conversation:
         self.nick = nick
         self.in_socket = None
         self.out_socket = None
+        self.nicks, self.ips = get_peers_()
 
         post_nick(nick)
         self.start_updater()
@@ -90,7 +91,7 @@ class Conversation:
                 sleep(3)
                 self.nicks, self.ips = get_peers_()
 
-        updater_thread = threading.Thread(target=updater, daemon=True)
+        updater_thread = threading.Thread(target=self.updater, daemon=True)
         updater_thread.start()
 
 
