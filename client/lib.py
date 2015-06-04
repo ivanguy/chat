@@ -141,3 +141,5 @@ class Conversation:
         sends msg to peer
         """
         self.o_conn.send(msg.encode('utf-8'))
+
+

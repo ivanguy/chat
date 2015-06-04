@@ -3,6 +3,15 @@ from PyQt4 import QtGui, QtCore
 import sys
 import lib
 
+
+class InStream(QtCore.QThread):
+    def __init__(self, parent=None):
+        QtCore.QThread.__init__(self, parent)
+
+    def run(self):
+        pass
+
+
 class MainWidget(QtGui.QWidget):
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
