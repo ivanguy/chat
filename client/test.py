@@ -25,8 +25,10 @@ print(*list(testchat.nicks.keys()), sep='\n')
 friend = input('friend:\n')
 print('friend:{}'.format(friend))
 testchat.out_connect(friend)
+testchat.out_stream('!!!#!#!SAY HELLO WORLD BRO!!#!#@')
 
 connected.set()
 
 while True:
     testchat.out_stream(input())
+    print('sending {}'.format())
