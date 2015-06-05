@@ -132,7 +132,7 @@ class Conversation:
         #       queue.get()
         #   if self.trust:
         self.in_socket = conn
-        server_sock.close()
+                                            #        server_sock.close()
         #       break
         #    else:
         #        conn.close()
@@ -168,11 +168,11 @@ class Conversation:
                 yield '...тишина'
             else:
                 msg = ''
-                while True:
-                    data = self.in_socket.recv(BUFF)
-                    if not data:
-                        break
-                    msg = msg + data.decode('utf-8')
+#                while True:
+                data = self.in_socket.recv(BUFF)
+                #    if not data:
+                #        break
+                msg = msg + data.decode('utf-8')
                 yield msg
 
     def out_stream(self, msg):
