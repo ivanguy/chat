@@ -74,12 +74,11 @@ class Conversation:
 
         makes incoming and outgoing connections in a non-blocking way
         """
+        post_nick(nick)
         self.nick = nick
         self.in_socket = None
         self.out_socket = None
-        self.nicks, self.ips = get_peers_()
 
-        post_nick(nick)
         self.start_updater()
 
     def start_updater(self):
