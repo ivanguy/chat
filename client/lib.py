@@ -75,26 +75,31 @@ class Conversation:
         makes incoming and outgoing connections in a non-blocking way
         """
         post_nick(nick)
+        sleep(20)
         self.nick = nick
         self.in_socket = None
         self.out_socket = None
 
         self.start_updater()
+        self.start_server()
 
     def start_updater(self):
         """
         !BLOCKING
         """
-        def updater():
-            while True:
-                sleep(20)
-                self.nicks, self.ips = get_peers_()
-                if self.out_socket == None:
-                    print(*list(self.nicks.keys()), sep='\n')
-
-        updater_thread = threading.Thread(target=updater, daemon=True)
+        updater_thread = threading.Thread(target=self.updater, daemon=True)
         updater_thread.start()
 
+    def updater(self):
+        while True:
+            sleep(20)
+            self.nicks, self.ips = get_peers_()
+            if self.out_socket == None:
+                print(*list(self.nicks.keys()), sep='\n')
+
+    def start_server(self):
+        server_thread = threading.Thread(target=self.server, daemon=True)
+        server_thread.start()
 
     def server(self):
         """

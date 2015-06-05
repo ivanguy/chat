@@ -19,8 +19,13 @@ server_thread.start()
 listener_thread = threading.Thread(target=output_widget, daemon=True)
 listener_thread.start()
 
+while True:
+    try:
+        print(*list(testchat.nicks.keys()), sep='\n')
+        break
+    except AttributeError:
+        continue
 
-print(*list(testchat.nicks.keys()), sep='\n')
 friend = input('friend:\n')
 print('friend:{}'.format(friend))
 testchat.out_connect(friend)
