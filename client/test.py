@@ -13,7 +13,7 @@ nick = input('nick:')
 
 testchat = Conversation(nick)
 
-server_thread = threading.Thread(target=testchat.server(), daemon=True)
+server_thread = threading.Thread(target=testchat.server, daemon=True)
 server_thread.start()
 
 listener_thread = threading.Thread(target=output_widget, daemon=True)
