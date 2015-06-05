@@ -165,7 +165,7 @@ class Conversation:
         while True:
             if self.in_socket is None:
                 sleep(10)
-                yield 'глухо'
+                yield '...тишина'
             else:
                 msg = ''
                 while True:

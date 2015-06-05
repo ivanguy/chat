@@ -12,10 +12,6 @@ def output_widget():
 nick = input('nick:')
 
 testchat = Conversation(nick)
-
-server_thread = threading.Thread(target=testchat.server, daemon=True)
-server_thread.start()
-
 listener_thread = threading.Thread(target=output_widget, daemon=True)
 listener_thread.start()
 
@@ -25,9 +21,7 @@ while True:
         break
     except AttributeError:
         continue
-
 friend = input('friend:\n')
-print('friend:{}'.format(friend))
 testchat.out_connect(friend)
 testchat.out_stream('!!!#!#!SAY HELLO WORLD BRO!!#!#@')
 
